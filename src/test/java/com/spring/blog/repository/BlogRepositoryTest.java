@@ -5,9 +5,11 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // DROP 테이블시, 필요한 어노테이션
@@ -33,7 +35,7 @@ public class BlogRepositoryTest {
         assertEquals(3, blogList.size());
 
         // (사람기준)2번째 객체의 ID 번호는 2번일 것이다.
-        assertEquals(2, blogList.get(blogId).getBlogID());
+        assertEquals(2, blogList.get(blogId).getBlogId());
     }
 
     @Test
@@ -48,7 +50,7 @@ public class BlogRepositoryTest {
         // then : 해당 객체의 writer 멤버변수는 "2번유저"이고, blogTitle은 "2번제목"이고 blogId는 2이다
         assertEquals("2번유저", blog.getWriter());
         assertEquals("2번제목", blog.getBlogTitle());
-        assertEquals(2, blog.getBlogID());
+        assertEquals(2, blog.getBlogId());
     }
 
     @Test
@@ -66,6 +68,7 @@ public class BlogRepositoryTest {
 //        blog.setWriter(writer);
 //        blog.setBlogTitle(blogTitle);
 //        blog.setBlogContent(blogContent);
+
         // blog 객체 생성 코드를 빌더패턴으로 리팩토링
         // 빌더 패턴 쓰는 법
         // 장점 : 파라미터 순서를 뒤바꿔서 집어넣어도 상관없음 
@@ -88,6 +91,43 @@ public class BlogRepositoryTest {
         assertEquals(blogContent, blogList.get(blogId).getBlogContent());
     }
 
+    @Test
+    @DisplayName("2번 삭제 후, 전체 목록 가져왔을 때 남은 행수 2개, 삭제한 번호 조회 시, null")
+    public void deleteById(){
+        // given : 삭제할 자료의 번호를 저장
+        long blogId = 2;
+
+        // when : 삭제로직 실행 후, findAll(), findById() 전체 행, 개별 행 가져오기
+        blogRepository.deleteById(blogId);
+    
+        // then : 단언문을 이용해 전체 행 2개, 개별행은 null임을 확인
+        assertEquals(2, blogRepository.findAll().size());
+        assertNull(blogRepository.findById(blogId));
+    }
+
+    @Test
+    @DisplayName("하하 업데이트지롱")
+    public void updateTest(){
+        // given
+        int blogId = 0; // 2번째 요소 업데이트
+
+        String blogTitle = "업데이트된제목";
+        String blogContent = "업데이트된본문";
+
+        Blog blog = Blog.builder()
+                .blogId(1)
+                .blogTitle(blogTitle)
+                .blogContent(blogContent)
+                .build();
+
+        // when
+       blogRepository.update(blog);
+       List<Blog>blogList = blogRepository.findAll();
+        // then
+        assertEquals("업데이트된제목", blogList.get(blogId).getBlogTitle());
+        assertEquals("업데이트된본문", blogList.get(blogId).getBlogContent());
+        System.out.println("업데이트 시각 : " + blogRepository.findById(blog.getBlogId()).getUpdateAt());
+    }
     @AfterEach // 각 단위테스트 끝난 후에 실행할 구문을 작성
     public void dropBlogTable(){
         blogRepository.dropBlogTable(); // blog 테이블 지우기
