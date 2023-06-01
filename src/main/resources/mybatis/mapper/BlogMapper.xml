@@ -6,10 +6,41 @@
 <mapper namespace="com.spring.blog.repository.BlogRepository">
     <!-- 리턴타입이 entity등의 클래스로 구성된 경우 패키지명부터 적어준다. -->
     <select id="findAll" resultType="com.spring.blog.entity.Blog">
-        SELECT * FROM blog
+        SELECT
+            blog_id as blogId,
+            writer,
+            blog_title as blogTitle,
+            blog_content as blogContent,
+            published_at as publishedAt,
+            updated_at as updatedAt,
+            blog_count as blogCount
+        FROM
+            blog
     </select>
 
+    <!-- 위 select 태그를 참조해 방금 만든 findByID를 연결해주시고, 리턴자료도 매칭해주세요. -->
+    <select id="findById" resultType="com.spring.blog.entity.Blog">
+        SELECT
+            blog_id as blogId,
+            writer,
+            blog_title as blogTitle,
+            blog_content as blogContent,
+            published_at as publishedAt,
+            updated_at as updatedAt,
+            blog_count as blogCount
+        FROM
+            blog
+        WHERE
+            blog_id = #{blogId}
+    </select>
 
+    <!-- insert 태그를 이용한 사전세팅 (result는 없지만 parameterType이 있음)-->
+    <insert id="save" parameterType="com.spring.blog.entity.Blog">
+        INSERT INTO
+            blog (writer, blog_title, blog_content)
+        VALUES
+            (#{writer}, #{blogTitle}, #{blogContent})
+    </insert>
 
     <!-- 테스트를 위한 쿼리문들 -->
     <select id="createBlogTable">

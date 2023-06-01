@@ -22,4 +22,12 @@ public interface BlogRepository {
     //전체 데이터 조회 기능
     // Blog 엔터티 하나가 포스팅 row 하나를 받을 수 있고 n개의 복수의 Blog 엔터티를 받아와야 하므로, List로 감싸줌
     List<Blog> findAll();
+
+    // 단일행 조회 기능 findBuyId()
+    // 호출시, blogId를 요구함
+    Blog findById(long blogId);
+
+    // 새 데이터 저장 기능 save()
+    // 저장 시, writer, blog_title, blog_content 3개 파라미터를 요구함
+    void save(Blog blog);
 }
