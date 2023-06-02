@@ -9,7 +9,7 @@ import java.sql.Date;
 @NoArgsConstructor@AllArgsConstructor
 @Builder // 빌더 패턴 생성자를 쓸 수 있게 해줌
 public class Blog {
-        private int blogId; // 숫자는 어지간하면 long형을 사용
+        private long blogId; // 숫자는 어지간하면 long형을 사용
         private String writer;
         private String blogTitle;
         private String blogContent;

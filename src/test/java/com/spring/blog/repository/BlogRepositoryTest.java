@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // DROP 테이블시, 필요한 어노테이션
+//@TestInstance(TestInstance.Lifecycle.PER_METHOD) /
 public class BlogRepositoryTest {
     @Autowired
     BlogRepository blogRepository;
@@ -106,30 +106,38 @@ public class BlogRepositoryTest {
     }
 
     @Test
-    @DisplayName("하하 업데이트지롱")
+    @DisplayName("2번글의 제목을 '업데이트된제목'으로, 본문도 '업데이트된본문'으로 수정 후 확인")
     public void updateTest(){
-        // given
-        int blogId = 0; // 2번째 요소 업데이트
+        // given :
+        // 1. 2번글 원본 데이터 얻어오고, blogTitle, blogContent 내용만 수정해서 다시 update()
+        // 2. Blog 객체를 생성해서 blogId와 blogTitle, blogContent내용만 setter로 주입해서 다시 update()
 
+        // fixture 생성
+        long blogId = 2;
         String blogTitle = "업데이트된제목";
         String blogContent = "업데이트된본문";
 
-        Blog blog = Blog.builder()
-                .blogId(1)
-                .blogTitle(blogTitle)
-                .blogContent(blogContent)
-                .build();
+        // 1번 given
+//        Blog blog = blogRepository.findById(blogId);
+//
+//        blog.setBlogTitle(blogTitle);
+//        blog.setBlogContent(blogContent);
 
-        // when
+        // 2번 given
+        Blog blog = Blog.builder()
+               .blogId(blogId)
+               .blogTitle(blogTitle)
+               .blogContent(blogContent)
+               .build();
+
+        // when : 수정내역을 디비에 반영해주기
        blogRepository.update(blog);
-       List<Blog>blogList = blogRepository.findAll();
-        // then
-        assertEquals("업데이트된제목", blogList.get(blogId).getBlogTitle());
-        assertEquals("업데이트된본문", blogList.get(blogId).getBlogContent());
-        System.out.println("업데이트 시각 : " + blogRepository.findById(blog.getBlogId()).getUpdateAt());
+
+        // then : 바뀐 2번 글의 타이틀은 '업데이트된제목', 2번 글의 본문은 '업데이트된본문'으로 변환되었을것을 단언
+        assertEquals(blogTitle, blogRepository.findById(blogId).getBlogTitle());
+        assertEquals(blogContent, blogRepository.findById(blogId).getBlogContent());
     }
     @AfterEach // 각 단위테스트 끝난 후에 실행할 구문을 작성
-    public void dropBlogTable(){
-        blogRepository.dropBlogTable(); // blog 테이블 지우기
+    public void dropBlogTable(){blogRepository.dropBlogTable(); // blog 테이블 지우기
     }
 }
