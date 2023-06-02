@@ -1,11 +1,9 @@
 package com.spring.blog.service;
 
 import com.spring.blog.entity.Blog;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -56,6 +54,55 @@ public class BlogServiceTest {
         // then
         assertEquals(2, blogService.findAll().size());
         assertNull(blogService.findById(blogId));
+    }
+
+    @Test
+    @Transactional
+    public void saveTest(){
+        // given : Blog 객체에 필요 데이터인 writer, blogTitle, blogContent를 주입해 builder패턴으로 생성
+        String writer = "4번유저";
+        String blogTitle = "4번제목";
+        String blogContent = "4번본문";
+
+        Blog blog = Blog.builder()
+                .writer(writer)
+                .blogTitle(blogTitle)
+                .blogContent(blogContent)
+                .build();
+
+        int lastBlogIndex = 3;
+        // when : save를 호출해 DB에 저장
+        blogService.save(blog);
+
+        // then : 전체 요소의 개수가 4개인지 확인하고,
+        // 현재 얻어온 마지막 포스팅의 writer, blogTitle, blogContent가 생성시 사용한 자료와 일치하는지 확인
+        assertEquals(4, blogService.findAll().size());
+        assertEquals(writer, blogService.findAll().get(lastBlogIndex).getWriter());
+        assertEquals(blogTitle, blogService.findAll().get(lastBlogIndex).getBlogTitle());
+        assertEquals(blogContent, blogService.findAll().get(lastBlogIndex).getBlogContent());
+
+    }
+
+    @Test
+    @Transactional
+    public void updateTest(){
+        // given
+        int blogId = 2;
+        String blogTitle = "새로운제목";
+        String blogContent = "새로운본문";
+
+        Blog blog = Blog.builder()
+                .blogId(blogId)
+                .blogTitle(blogTitle)
+                .blogContent(blogContent)
+                .build();
+
+        // when
+        blogService.update(blog);
+        // then
+        assertEquals(blogId, blogService.findById(blogId).getBlogId());
+        assertEquals(blogTitle, blogService.findById(blogId).getBlogTitle());
+        assertEquals(blogContent, blogService.findById(blogId).getBlogContent());
     }
 
 }

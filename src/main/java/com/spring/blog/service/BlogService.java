@@ -16,4 +16,9 @@ public interface BlogService {
     // 단일 포스팅을 삭제하는 메서드 deleteById를 선언하기
    void deleteById(long blogId);
 
+   // 단일 포스팅을 게시하는 메서드 save()를 선언하기
+    void save(Blog blog);
+
+    // 단일 포스팅을 수정하는 메서드 update() 선언
+    void update(Blog blog);
 }
