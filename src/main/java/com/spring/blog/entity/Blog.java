@@ -13,6 +13,7 @@ public class Blog {
         private String writer;
         private String blogTitle;
         private String blogContent;
+
         private Date publishedAt;
         private Date updateAt;
         private long blogCount;
