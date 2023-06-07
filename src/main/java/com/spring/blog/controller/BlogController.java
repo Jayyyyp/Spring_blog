@@ -1,10 +1,12 @@
 package com.spring.blog.controller;
 
 import com.spring.blog.entity.Blog;
+import com.spring.blog.exception.NotFoundBlogIdException;
 import com.spring.blog.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -33,5 +35,27 @@ public class BlogController {
         model.addAttribute("blogList", blogList);
 
         return "blog/list";
+    }
+
+    // 디테일 페이지의 주소 패턴
+    // /blog/detail/글번호
+    // 위 방식으로 글번호를 입력받아, service를 이용해 해당 글 번호 요소만 얻어
+    // 뷰에 적재하는 코드
+    @RequestMapping(value = "/detail/{blogId}", method = RequestMethod.GET)
+    public String detail(@PathVariable long blogId, Model model){
+        Blog blog = blogService.findById(blogId);
+          if(blog == null){
+              try {
+                  throw new NotFoundBlogIdException("없는 ID로 조회하셨습니다. 조회번호 : " + blogId);
+              } catch (NotFoundBlogIdException e) {
+//                  e.printStackTrace();
+                  return "blog/NotFoundBlogIdExceptionPage";
+              }
+          }
+//         Blog blog = blogService.findById(blogId);
+//         model.addAttribute("blog", blog);
+           model.addAttribute("blog", blog);
+
+         return "blog/detail";
     }
 }
