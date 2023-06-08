@@ -37,5 +37,6 @@
         </tbody>
 </table>
 </div>
+                <a href="/blog/insert" class="btn btn-primary"> 글쓰기 </a>
 </body>
 </html>
