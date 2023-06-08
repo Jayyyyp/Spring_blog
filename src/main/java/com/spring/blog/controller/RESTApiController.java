@@ -2,7 +2,6 @@ package com.spring.blog.controller;
 
 import com.spring.blog.dto.BmiDTO;
 import com.spring.blog.dto.PersonDTO;
-import lombok.Getter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +12,7 @@ import java.util.List;
 //@ResponseBody  // REST형식 전환, 메서드 위에 붙으면 해당 메서드를 REST 형식으로
 @RestController // 위 2개 어노테이션을 한 번에 지정해줌
 @RequestMapping("/resttest")
+@CrossOrigin(origins = "http://127.0.0.1:5500") // 해당 출처의 비동기 요청 허용
 public class RESTApiController {
 
     // REST 컨트롤러는 크게 json을 리턴하거나, String을 리턴하게 만들 수 있다.
@@ -66,6 +66,29 @@ public class RESTApiController {
     // 200이 아닌 예외코드
     @RequestMapping(value = "/bmi", method = RequestMethod.GET)
     public ResponseEntity<?> bmi(BmiDTO bmi){ // 커맨드 객체 형식으로 사용됨
+
+        // 예외처리 들어갈 자리
+        if(bmi.getHeight() == 0){
+            return ResponseEntity
+                    .badRequest() // 400
+                    .body("키에 0을 넣지 말아주시고, 제대로 된 값을 넣어주세요.");
+        }
+
+        double result = bmi.getWeight() / ((bmi.getHeight()/100) * (bmi.getHeight()/100));
+
+        // 헤더 추가해보기
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("fruits", "melon");
+        headers.add("lunch", "pizza");
+        return ResponseEntity
+                .ok() // 200
+                .headers(headers) // 헤더 추가
+                .body(result); // 사용자에게 보여질 데이터
+    }
+
+    // Parameter를 활용한 json 데이터 파라미터로 전송해 요청 넣기
+    @RequestMapping(value = "/bmi2", method = RequestMethod.GET)
+    public ResponseEntity<?> bmi2(@RequestBody BmiDTO bmi){ // 커맨드 객체 형식으로 사용됨
 
         // 예외처리 들어갈 자리
         if(bmi.getHeight() == 0){
