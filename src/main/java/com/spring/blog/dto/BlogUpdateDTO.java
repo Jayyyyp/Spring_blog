@@ -1,4 +1,4 @@
-package com.spring.blog.controller.dto;
+package com.spring.blog.dto;
 
 
 import com.spring.blog.entity.Blog;
